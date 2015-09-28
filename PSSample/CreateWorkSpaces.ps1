@@ -46,14 +46,14 @@ if ($directoryId -eq $null)
 $bundleId = (Get-WKSWorkspaceBundles -Owner AMAZON | Where-Object -FilterScript {$_.Name -eq "Value(Japanese)"}).BundleId
 $workspaces = @()
 
+#Create WorkSpaces Users
 for ($i = 1; $i -le 10; $i++ )
 {
 $username = "User_" + $i
 $workspaces += @{"BundleID" = $bundleId; "DirectoryId" = $directoryId; "UserName" = $username}
 }
 
-$workspaces
 #Create WorkSpaces
-#$response = New-WKSWorkspace -Workspace $workspaces
-#$response.PendingRequests
-#$response.FailedRequests
+$response = New-WKSWorkspace -Workspace $workspaces
+$response.PendingRequests
+$response.FailedRequests
