@@ -12,8 +12,12 @@ if ($vpcId -eq $null)
         $tag.Key = "Name"
         $tag.Value = "Examples"
         New-EC2Tag -Resource $vpcId -Tag $tag
-        New-EC2Subnet -VpcId $vpcid -CidrBlock 10.0.0.0/24 -AvailabilityZone ap-northeast-1a
-        New-EC2Subnet -VpcId $vpcid -CidrBlock 10.0.1.0/24 -AvailabilityZone ap-northeast-1c
+        $subnetID = New-EC2Subnet -VpcId $vpcid -CidrBlock 10.0.0.0/24 -AvailabilityZone ap-northeast-1a
+        $subnetID += New-EC2Subnet -VpcId $vpcid -CidrBlock 10.0.1.0/24 -AvailabilityZone ap-northeast-1c
+    }
+    else
+    {
+        $subnetId = (Get-EC2Subnet | Where-Object -FilterScript {$_.VpcId -eq $vpcId}).SubnetId
     }
 
 #Get Directory ID
@@ -25,11 +29,8 @@ if ($directoryId -eq $null)
     {
         $password = "P@ssw0rd"
         $directorysize = "small"
-        $filtername.Name = "vpc-id"
-        $filtername.Value = $vpcId
-        $subnet = (Get-EC2Subnet -Filter $filtername).SubnetId
 
-        $directoryid = New-DSDirectory -Name $directoryname -Password $password -Size $directorysize -VpcSettings_SubnetId $subnet -VpcSettings_VpcId $vpcId
+        $directoryid = New-DSDirectory -Name $directoryname -Password $password -Size $directorysize -VpcSettings_SubnetId $subnetId -VpcSettings_VpcId $vpcId
         
         #Wait until Directory status is Active
         do
