@@ -27,7 +27,7 @@ $directoryId = (Get-DSDirectory | Where-Object -FilterScript {$_.Name -eq $direc
 #Create Directory
 if ($directoryId -eq $null) 
     {
-        $password = "P@ssw0rd"
+        $password = (Get-Credential -Credential Administrator).Password
         $directorysize = "small"
 
         $directoryid = New-DSDirectory -Name $directoryname -Password $password -Size $directorysize -VpcSettings_SubnetId $subnetId -VpcSettings_VpcId $vpcId
